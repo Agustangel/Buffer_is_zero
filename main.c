@@ -11,21 +11,25 @@ const char *__asan_default_options(void)
 }
 #endif
 
-int main(void)
+int main(int argc, char** argv)
 {
 	int perf_fd;
 	struct perf_counters cnt0, cnt1;
-	if ((perf_fd = perf_setup()) < 0) {
+	if ((perf_fd = perf_setup()) < 0)
+	{
 		perf_hint();
 		return 1;
 	}
 
 	// TODO make size configurable from command line
-	size_t size = 8192;
-	char *buf = calloc(size, 1);
+	args_t args;
+	parse_args(argc, argv, &args);
+
+	size_t size = args.size;
+	char* buf = (char*) calloc(size, 1);
 
 	// TODO make position and value of non-zero element configurable
-	buf[size - 1] = 1;
+	position_nonzero_elem(buf, args.position, args.value);
 
 	perf_measure(perf_fd, &cnt0);
 	buffer_is_zero(buf, size);
