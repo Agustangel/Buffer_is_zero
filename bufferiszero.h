@@ -29,6 +29,7 @@ typedef struct args_t
     int value;
 }args_t;
 
-int buffer_is_zero(void* vbuf, size_t size);
+int buffer_is_zero_slow(void* vbuf, size_t size);
+int buffer_is_zero_fast(void* vbuf, size_t size);
 int parse_args(int argc, char** argv, args_t* arg);
 void position_nonzero_elem(char* buf, size_t position, int value);

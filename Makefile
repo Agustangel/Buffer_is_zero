@@ -1,3 +1,4 @@
+
 CFLAGS ?= -O2 -g1
 
 CFLAGS += -Wall -falign-loops=32
@@ -12,7 +13,7 @@ all: $V
 .PHONY: $V all clean
 
 $V: %: $P.%
-	./$<
+#./$<
 
 OBJ := main.o bufferiszero.o
 
