@@ -40,13 +40,9 @@ uint_fast32_t load32(const void* V)
    uint8_t* Val = (uint8_t*) V;
 
    Ret |= ((uint_fast32_t) Val[0]);
-   Ret |= ((uint_fast32_t) Val[1]) << 4;
-   Ret |= ((uint_fast32_t) Val[2]) << 8;
-   Ret |= ((uint_fast32_t) Val[3]) << 12;
-   Ret |= ((uint_fast32_t) Val[4]) << 16;
-   Ret |= ((uint_fast32_t) Val[5]) << 20;
-   Ret |= ((uint_fast32_t) Val[6]) << 24;
-   Ret |= ((uint_fast32_t) Val[7]) << 28;
+   Ret |= ((uint_fast32_t) Val[1]) << 8;
+   Ret |= ((uint_fast32_t) Val[2]) << 16;
+   Ret |= ((uint_fast32_t) Val[3]) << 24;
 
    return Ret;
 }
