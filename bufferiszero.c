@@ -45,6 +45,7 @@ uint64_t load64(const void* V)
 
 int buffer_is_zero_fast(void* vbuf, size_t size)
 {
+    
     uint_fast32_t tmp1, tmp2;
     const unsigned width = sizeof(tmp1) * 2; // 8 byte
 
