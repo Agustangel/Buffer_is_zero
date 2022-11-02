@@ -91,11 +91,13 @@ void position_nonzero_elem(char* buf, size_t position, int value)
 
 int parse_args(int argc, char** argv, args_t* args)
 {
+    // Default buffer initialization
+	if (argc == 1) {
 
-	if (argc < 4)
-    {
-        printf("ERROR: incorrect number of argumnets.\n");
-        return ERR_INC_INPUT;
+        args->position = -1;
+        args->size = DEFAULT_BUF_SIZ;
+        return 0;
+        
     }
 
     if(strcmp(argv[1], "--help") == 0)

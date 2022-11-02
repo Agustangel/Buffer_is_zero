@@ -1,5 +1,6 @@
 #include <stddef.h>
 
+#define DEFAULT_BUF_SIZ 4096
 
 //! const for describing input parameters
 static const char* USAGE = "Usage: ./biz.[perf, test] size_buffer position_flag position value_flag value\n \

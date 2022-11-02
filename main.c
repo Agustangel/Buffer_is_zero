@@ -44,41 +44,24 @@ int main(int argc, char** argv)
 #ifdef __SANITIZE_ADDRESS__
 	return 0;
 #endif
-	unsigned long long min_c_slow = -1, min_c_fast = -1,  min_i_slow = 0, min_i_fast = 0;
+	unsigned long long min_c = -1, min_i = 0;
 	for (int i = 0; i < 1000000; i++) {
-		unsigned long long nc_slow, ni_slow, nc_fast, ni_fast;
-
-		// TODO: separate function
-		perf_measure(perf_fd, &cnt0);
-		buffer_is_zero_slow(buf, size);
-		perf_measure(perf_fd, &cnt1);
-
-		nc_slow = cnt1.cycles - cnt0.cycles;
-		ni_slow = cnt1.instructions - cnt0.instructions;
-
-		if (min_c_slow > nc_slow) {
-			min_c_slow = nc_slow;
-			min_i_slow = ni_slow;
-		}
+		unsigned long long nc, ni;
 
 		perf_measure(perf_fd, &cnt0);
 		buffer_is_zero_fast(buf, size);
 		perf_measure(perf_fd, &cnt1);
 
-		nc_fast = cnt1.cycles - cnt0.cycles;
-		ni_fast = cnt1.instructions - cnt0.instructions;
+		nc = cnt1.cycles - cnt0.cycles;
+		ni = cnt1.instructions - cnt0.instructions;
 
-		if (min_c_fast > nc_fast) {
-			min_c_fast = nc_fast;
-			min_i_fast = ni_fast;
+		if (min_c> nc) {
+			min_c = nc;
+			min_i = ni;
 		}
 	}
-	printf("(slow) %llu cycles minimum for %zu bytes\n"
+	printf("%llu cycles minimum for %zu bytes\n"
 	       "%.3g bytes/cycle, %.3g instructions/cycle\n",
-	       min_c_slow, size,
-	       1. * size / min_c_slow, 1. * min_i_slow / min_c_slow);
-	printf("(fast) %llu cycles minimum for %zu bytes\n"
-	       "%.3g bytes/cycle, %.3g instructions/cycle\n",
-	       min_c_fast, size,
-	       1. * size / min_c_fast, 1. * min_i_fast / min_c_fast);
+	       min_c, size,
+	       1. * size / min_c, 1. * min_i / min_c);
 }
