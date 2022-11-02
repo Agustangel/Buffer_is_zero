@@ -34,3 +34,12 @@ int buffer_is_zero_slow(void* vbuf, size_t size);
 int buffer_is_zero_fast(void* vbuf, size_t size);
 int parse_args(int argc, char** argv, args_t* arg);
 void position_nonzero_elem(char* buf, size_t position, int value);
+
+#define unlikely(expr) __builtin_expect((expr), 0)
+#define   likely(expr) __builtin_expect((expr), 1)
+
+uint64_t load64(const void* V);
+
+static inline uint64_t nonzero_chunk(const char *p);
+
+int is_empty_fast(const char * buf, size_t size);

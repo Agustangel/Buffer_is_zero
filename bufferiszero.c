@@ -16,33 +16,29 @@ int buffer_is_zero_slow(void* vbuf, size_t size)
 	return 1;
 }
 
-#define unlikely(expr) __builtin_expect((expr), 0)
-#define   likely(expr) __builtin_expect((expr), 1)
-
-
-uint_fast32_t load32(const void* V);
-static inline uint_fast32_t nonzero_chunk(const char *p);
-int is_empty_fast(const char * buf, size_t size);
-
 
 static inline uint_fast32_t nonzero_chunk(const char *p)
 {
     uint_fast32_t tmp1, tmp2;    
 
-    tmp1 = load32(p);
-    tmp2 = load32(p + 4);
+    tmp1 = load64(p);
+    tmp2 = load64(p + 8);
     return tmp1|tmp2;
 }
 
-uint_fast32_t load32(const void* V)
+uint64_t load64(const void* V)
 {
-   uint_fast32_t Ret = 0;
+   uint64_t Ret = 0;
    uint8_t* Val = (uint8_t*) V;
 
-   Ret |= ((uint_fast32_t) Val[0]);
-   Ret |= ((uint_fast32_t) Val[1]) << 8;
-   Ret |= ((uint_fast32_t) Val[2]) << 16;
-   Ret |= ((uint_fast32_t) Val[3]) << 24;
+   Ret |= ((uint64_t) Val[0]);
+   Ret |= ((uint64_t) Val[1]) << 8;
+   Ret |= ((uint64_t) Val[2]) << 16;
+   Ret |= ((uint64_t) Val[3]) << 24;
+   Ret |= ((uint64_t) Val[4]) << 32;
+   Ret |= ((uint64_t) Val[5]) << 40;
+   Ret |= ((uint64_t) Val[6]) << 48;
+   Ret |= ((uint64_t) Val[7]) << 56;
 
    return Ret;
 }
@@ -53,7 +49,7 @@ int buffer_is_zero_fast(void* vbuf, size_t size)
     const unsigned width = sizeof(tmp1) * 2; // 8 byte
 
     if (likely(size >= width))
-    {
+    {   
         const char *endp = vbuf + size - width;  
         
         uintptr_t misalign = (uintptr_t)vbuf % width; // check if memory is aligned
