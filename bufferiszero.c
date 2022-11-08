@@ -18,7 +18,7 @@ int buffer_is_zero_slow(void* vbuf, size_t size)
 
 int buffer_is_zero_fast(void* vbuf, size_t size)
 {
-    const unsigned width = sizeof(uint_fast32_t) * 2; // 8 byte
+    const unsigned width = sizeof(uint64_t) * 2; // 8 byte
 
     if (likely(size >= width))
     {   

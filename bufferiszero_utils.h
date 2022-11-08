@@ -32,4 +32,4 @@ uint64_t load64(const void* V);
 
 uint64_t nonzero_chunk(const char *p);
 
-int is_empty_fast(const char * buf, size_t size);
+int is_empty_fast(const char * buf, size_t

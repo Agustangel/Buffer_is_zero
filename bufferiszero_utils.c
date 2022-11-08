@@ -28,6 +28,8 @@ uint64_t nonzero_chunk(const char *p)
 {
     uint64_t tmp1, tmp2;    
 
+    __builtin_prefetch(p);
+    __builtin_prefetch(p);
     tmp1 = load64(p);
     tmp2 = load64(p + 8);
 
