@@ -6,7 +6,7 @@
 #define DEFAULT_BUF_SIZ 4096
 
 //! const for describing input parameters
-const char* USAGE = "Usage: ./biz.perf <size> [<pos>:<val>]\n";
+static const char* USAGE = "Usage: ./biz.perf <size> [<pos>:<val>]\n";
 
 enum error_names
 {
@@ -31,5 +31,3 @@ void position_nonzero_elem(char* buf, size_t position, int value);
 uint64_t load64(const void* V);
 
 uint64_t nonzero_chunk(const char *p);
-
-int is_empty_fast(const char * buf, size_t
