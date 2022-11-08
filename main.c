@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include "bufferiszero.h"
+#include "bufferiszero_utils.h"
 #include "perfcnt.h"
 
 #ifdef __SANITIZE_ADDRESS__
