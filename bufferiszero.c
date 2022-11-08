@@ -46,9 +46,7 @@ uint64_t load64(const void* V)
 
 int buffer_is_zero_fast(void* vbuf, size_t size)
 {
-    
-    uint_fast32_t tmp1, tmp2;
-    const unsigned width = sizeof(tmp1) * 2; // 8 byte
+    const unsigned width = sizeof(uint_fast32_t) * 2; // 8 byte
 
     if (likely(size >= width))
     {   
@@ -78,6 +76,7 @@ int buffer_is_zero_fast(void* vbuf, size_t size)
 
         return t == 0;
     }
+    return 1;
 }
 
 void position_nonzero_elem(char* buf, size_t position, int value)

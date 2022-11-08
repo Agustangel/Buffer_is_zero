@@ -41,6 +41,4 @@ void position_nonzero_elem(char* buf, size_t position, int value);
 
 uint64_t load64(const void* V);
 
-static inline uint64_t nonzero_chunk(const char *p);
-
 int is_empty_fast(const char * buf, size_t size);
