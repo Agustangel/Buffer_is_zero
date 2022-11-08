@@ -17,12 +17,13 @@ int buffer_is_zero_slow(void* vbuf, size_t size)
 }
 
 
-static inline uint_fast32_t nonzero_chunk(const char *p)
+static inline uint64_t nonzero_chunk(const char *p)
 {
-    uint_fast32_t tmp1, tmp2;    
+    uint64_t tmp1, tmp2;    
 
     tmp1 = load64(p);
     tmp2 = load64(p + 8);
+
     return tmp1|tmp2;
 }
 

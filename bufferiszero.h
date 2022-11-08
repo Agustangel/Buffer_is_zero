@@ -1,4 +1,5 @@
 #include <stddef.h>
+#include <stdint.h>
 
 #define DEFAULT_BUF_SIZ 4096
 
