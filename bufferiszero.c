@@ -16,7 +16,6 @@ int buffer_is_zero_slow(void* vbuf, size_t size)
 	return 1;
 }
 
-
 int buffer_is_zero_fast(void* vbuf, size_t size)
 {
     const unsigned width = sizeof(uint_fast32_t) * 2; // 8 byte
