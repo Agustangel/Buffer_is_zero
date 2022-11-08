@@ -26,7 +26,6 @@ int buffer_is_zero_fast(void* vbuf, size_t size)
         
         uintptr_t misalign = (uintptr_t)vbuf % width; // check if memory is aligned
         const char *p = vbuf + width  - misalign;
-
         while (p < endp)
         {
             if(nonzero_chunk(p)) return 0;
