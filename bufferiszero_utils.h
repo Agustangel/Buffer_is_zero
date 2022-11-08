@@ -5,9 +5,6 @@
 
 #define DEFAULT_BUF_SIZ 4096
 
-//! const for describing input parameters
-static const char* USAGE = "Usage: ./biz.perf <size> [<pos>:<val>]\n";
-
 enum error_names
 {
     ERR_INC_INPUT = -5

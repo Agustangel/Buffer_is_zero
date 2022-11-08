@@ -5,6 +5,10 @@
 #include "bufferiszero_utils.h"
 #include "perfcnt.h"
 
+//! const for describing input parameters
+static const char* USAGE = "Usage: ./biz.perf <size> [<pos>:<val>]\n";
+
+
 #ifdef __SANITIZE_ADDRESS__
 const char *__asan_default_options(void)
 {
