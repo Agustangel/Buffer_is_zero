@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include <getopt.h>
 
 #include "bufferiszero_utils.h"
 
@@ -18,41 +17,9 @@ int parse_args(int argc, char** argv, args_t* args)
         
     }
 
-    if(strcmp(argv[1], "--help") == 0)
-    {
-        printf("%s\n", USAGE);
-        exit(EXIT_SUCCESS);
-    }
-
-	int ret = 0;
-	static const char opts[] = "p:v:";
-    while((ret = getopt(argc, argv, opts)) != -1)
-	{
-        switch (ret)
-        {
-		case 'p':
-			args->position = atoi(optarg);
-			break;
-		case 'v':
-			args->value = atoi(optarg);
-			break;
-		default:
-            printf("ERROR: invalied option.\n");
-            exit(ERR_INC_INPUT);   			
-		}
-	}
-	args->size = atoi(argv[optind]);
-
-	if(args->size < 0)
-	{
-		printf("ERROR: invalied size of buffer.\n");
-		return ERR_INC_INPUT;
-	}
-	if((args->position >= args->size) && (args->position < -1))
-	{
-		printf("ERROR: invalied position.\n");
-		return ERR_INC_INPUT;
-	}
+    args->size = strtoll(argv[1], &argv[1], 10);
+    char* arg = argv[2];
+    sscanf(arg, "%d:%d", &args->position, &args->value);
 
 	return 0;
 }
