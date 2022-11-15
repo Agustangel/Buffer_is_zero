@@ -15,24 +15,26 @@ buffer_is_zero_slow:
 	movq	%rsi, -32(%rbp) # size -> -32 rbp
 	movq	-24(%rbp), %rax
 	movq	%rax, -8(%rbp)
-	movq	$0, -16(%rbp) # i -> -16 rbp, i = 0
-	jmp	.L2
+# START MAIN LOOP
+	movq	$0, -16(%rbp) # i -> rbp - 16, i = 0, MEMORY
+	jmp	.L2 # CONTROL FLOW
 .L5:
-	movq	-8(%rbp), %rdx
-	movq	-16(%rbp), %rax # i -> rax
-	addq	%rdx, %rax 
-	movzbl	(%rax), %eax # buf[i]
-	testb	%al, %al # if (buf[i])
-	je	.L3
-	movl	$0, %eax # return 0
-	jmp	.L4
+	movq	-8(%rbp), %rdx # buf -> rdx, MEMORY
+	movq	-16(%rbp), %rax # i -> rax, MEMORY
+	addq	%rdx, %rax # buf + i, ARITHMETIC
+	movzbl	(%rax), %eax # buf[i], MEMORY
+	testb	%al, %al # if (buf[i]), ARITHMETIC (COMPARE)
+	je	.L3 # CONTROL FLOW
+	movl	$0, %eax # return 0, MEMORY
+	jmp	.L4 # CONTROL FLOW
 .L3:
-	addq	$1, -16(%rbp) # i + 1
+	addq	$1, -16(%rbp) # i + 1, ARITHMETIC
 .L2:
-	movq	-16(%rbp), %rax # i -> rax
-	cmpq	-32(%rbp), %rax # rax (i) < size
-	jb	.L5
-	movl	$1, %eax # return 1
+	movq	-16(%rbp), %rax # i -> rax, MEMORY
+	cmpq	-32(%rbp), %rax # rax (i) < size, COMPARE
+	jb	.L5 # loop, CONTROL FLOW
+	movl	$1, %eax # return 1, MEMORY
+# END MAIN LOOP
 .L4:
 	popq	%rbp
 	.cfi_def_cfa 7, 8
