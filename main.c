@@ -40,12 +40,6 @@ int main(int argc, char** argv)
 	// TODO make position and value of non-zero element configurable
 	position_nonzero_elem(buf, args.position, args.value);
 
-	perf_measure(perf_fd, &cnt0);
-	buffer_is_zero_slow(buf, size);
-
-	perf_measure(perf_fd, &cnt0);
-	buffer_is_zero_fast(buf, size);
-
 #ifdef __SANITIZE_ADDRESS__
 	return 0;
 #endif
