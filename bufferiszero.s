@@ -18,11 +18,7 @@ buffer_is_zero_slow:
 	movq	%rax, -8(%rbp)
 # START MAIN LOOP
 	movq	$0, -16(%rbp) # i -> rbp - 16, i = 0, MEMORY
-.L2:
-	movq	-16(%rbp), %rax # i -> rax, MEMORY
-	cmpq	-32(%rbp), %rax # rax (i) < size, COMPARE
-	jb	.L5 # loop, CONTROL FLOW
-	movl	$1, %eax # return 1, MEMORY
+	jmp	.L2 # CONTROL FLOW
 .L5:
 	movq	-8(%rbp), %rdx # buf -> rdx, MEMORY
 	movq	-16(%rbp), %rax # i -> rax, MEMORY
@@ -156,4 +152,3 @@ buffer_is_zero_fast:
 3:
 	.align 8
 4:
-
