@@ -7,7 +7,7 @@
 #include "bufferiszero_utils.h"
 
 
-int buffer_is_zero_slow(void* vbuf, size_t size)
+int buffer_is_zero(void* vbuf, size_t size)
 {
 	char* buf = (char*) vbuf;
 	for (size_t i = 0; i < size; i++)

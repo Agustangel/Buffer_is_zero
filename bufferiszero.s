@@ -1,3 +1,4 @@
+# gcc -c -g -O0 bufferiszero.c
 	.file	"bufferiszero.c"
 	.text
 	.globl	buffer_is_zero_slow

@@ -48,7 +48,7 @@ int main(int argc, char** argv)
 		unsigned long long nc, ni;
 
 		perf_measure(perf_fd, &cnt0);
-		buffer_is_zero_fast(buf, size);
+		buffer_is_zero(buf, size);
 		perf_measure(perf_fd, &cnt1);
 
 		nc = cnt1.cycles - cnt0.cycles;
