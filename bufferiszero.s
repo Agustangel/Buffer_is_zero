@@ -152,3 +152,4 @@ buffer_is_zero_fast:
 3:
 	.align 8
 4:
+
