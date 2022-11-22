@@ -4,6 +4,7 @@
 #include "bufferiszero.h"
 #include "bufferiszero_utils.h"
 #include "perfcnt.h"
+#include "tests.h"
 
 //! const for describing input parameters
 static const char* USAGE = "Usage: ./biz.perf <size> [<pos>:<val>]\n";
@@ -39,6 +40,10 @@ int main(int argc, char** argv)
 
 	// TODO make position and value of non-zero element configurable
 	position_nonzero_elem(buf, args.position, args.value);
+	
+	int res = test_zero_buffer(buf, size);
+	if (res != 0)
+		return EXIT_FAILURE;
 
 #ifdef __SANITIZE_ADDRESS__
 	return 0;

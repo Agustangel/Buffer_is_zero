@@ -14,7 +14,7 @@ all: $V
 $V: %: $P.%
 	./$<
 
-OBJ := main.o bufferiszero.o bufferiszero_utils.o
+OBJ := main.o bufferiszero.o bufferiszero_utils.o tests.o
 
 OBJ-test := $(addprefix .o/test/, $(OBJ))
 OBJ-perf := $(addprefix .o/perf/, $(OBJ))

@@ -59,7 +59,8 @@ void position_nonzero_elem(char* buf, size_t position, int value)
 	buf[position] = value;
 }
 
-void log_to_file(const char* fmt, ...) {
+void log_to_file(const char* fmt, ...) 
+{
 
     va_list args;
     char output[MAX_LOG_LEN] = {0};

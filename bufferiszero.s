@@ -1,138 +1,145 @@
-# gcc -c -g -O0 bufferiszero.c
 	.file	"bufferiszero.c"
 	.text
-	.globl	buffer_is_zero_slow
-	.type	buffer_is_zero_slow, @function
-buffer_is_zero_slow:
-.LFB6:
+	.p2align 4
+	.globl	buffer_is_zero
+	.type	buffer_is_zero, @function
+buffer_is_zero:
+.LFB52:
 	.cfi_startproc
 	endbr64
-	pushq	%rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
-	movq	%rsp, %rbp
-	.cfi_def_cfa_register 6
-	movq	%rdi, -24(%rbp)
-	movq	%rsi, -32(%rbp) # size -> -32 rbp
-	movq	-24(%rbp), %rax
-	movq	%rax, -8(%rbp)
-# START MAIN LOOP
-	movq	$0, -16(%rbp) # i -> rbp - 16, i = 0, MEMORY
-	jmp	.L2 # CONTROL FLOW
-.L5:
-	movq	-8(%rbp), %rdx # buf -> rdx, MEMORY
-	movq	-16(%rbp), %rax # i -> rax, MEMORY
-	addq	%rdx, %rax # buf + i, ARITHMETIC
-	movzbl	(%rax), %eax # buf[i], MEMORY
-	testb	%al, %al # if (buf[i]), ARITHMETIC (COMPARE)
-	je	.L3 # CONTROL FLOW
-	movl	$0, %eax # return 0, MEMORY
-	jmp	.L4 # CONTROL FLOW
-.L3:
-	addq	$1, -16(%rbp) # i + 1, ARITHMETIC
-.L2:
-	movq	-16(%rbp), %rax # i -> rax, MEMORY
-	cmpq	-32(%rbp), %rax # rax (i) < size, COMPARE
-	jb	.L5 # loop, CONTROL FLOW
-	movl	$1, %eax # return 1, MEMORY
-# END MAIN LOOP
+	cmpq	$7, %rsi
+	jbe	.L6
+	xorl	%edx, %edx
+	xorl	%eax, %eax
+	jmp	.L4
+	.p2align 4,,10
+	.p2align 3
+.L14:
+	addl	$8, %edx
+	movslq	%edx, %rcx
+	leaq	8(%rcx), %r8
+	cmpq	%rsi, %r8
+	ja	.L13
+	movq	%rcx, %rax
 .L4:
-	popq	%rbp
-	.cfi_def_cfa 7, 8
+	cmpb	$0, (%rdi,%rax)
+	je	.L14
+.L10:
+	xorl	%eax, %eax
 	ret
+	.p2align 4,,10
+	.p2align 3
+.L13:
+	movslq	%eax, %rdx
+	cltq
+.L2:
+	cmpq	%rax, %rsi
+	jbe	.L9
+	addq	$1, %rdx
+	jmp	.L5
+	.p2align 4,,10
+	.p2align 3
+.L15:
+	leaq	1(%rdx), %rcx
+	movq	%rdx, %rax
+	cmpq	%rsi, %rdx
+	jnb	.L9
+	movq	%rcx, %rdx
+.L5:
+	cmpb	$0, (%rdi,%rax)
+	je	.L15
+	jmp	.L10
+	.p2align 4,,10
+	.p2align 3
+.L9:
+	movl	$1, %eax
+	ret
+.L6:
+	xorl	%eax, %eax
+	xorl	%edx, %edx
+	jmp	.L2
 	.cfi_endproc
-.LFE6:
-	.size	buffer_is_zero_slow, .-buffer_is_zero_slow
+.LFE52:
+	.size	buffer_is_zero, .-buffer_is_zero
+	.p2align 4
 	.globl	buffer_is_zero_fast
 	.type	buffer_is_zero_fast, @function
 buffer_is_zero_fast:
-.LFB7:
+.LFB53:
 	.cfi_startproc
 	endbr64
+	cmpq	$15, %rsi
+	jbe	.L17
 	pushq	%rbp
 	.cfi_def_cfa_offset 16
 	.cfi_offset 6, -16
-	movq	%rsp, %rbp
-	.cfi_def_cfa_register 6
-	subq	$64, %rsp
-	movq	%rdi, -56(%rbp)
-	movq	%rsi, -64(%rbp)
-	movl	$16, -44(%rbp)
-	movl	-44(%rbp), %eax
-	cmpq	%rax, -64(%rbp)
-	setnb	%al
+	leaq	-16(%rdi,%rsi), %rbp
+	andq	$-16, %rdi
+	pushq	%rbx
+	.cfi_def_cfa_offset 24
+	.cfi_offset 3, -24
+	leaq	16(%rdi), %rbx
+	subq	$8, %rsp
+	.cfi_def_cfa_offset 32
+	cmpq	%rbx, %rbp
+	ja	.L20
+	jmp	.L18
+	.p2align 4,,10
+	.p2align 3
+.L29:
+	addq	$16, %rbx
+	cmpq	%rbx, %rbp
+	jbe	.L18
+.L20:
+	movq	%rbx, %rdi
+	call	nonzero_chunk@PLT
+	testq	%rax, %rax
+	je	.L29
+	addq	$8, %rsp
+	.cfi_remember_state
+	.cfi_def_cfa_offset 24
+	xorl	%eax, %eax
+	popq	%rbx
+	.cfi_def_cfa_offset 16
+	popq	%rbp
+	.cfi_def_cfa_offset 8
+	ret
+	.p2align 4,,10
+	.p2align 3
+.L18:
+	.cfi_restore_state
+	movq	%rbp, %rdi
+	call	nonzero_chunk@PLT
+	testq	%rax, %rax
+	sete	%al
+	addq	$8, %rsp
+	.cfi_def_cfa_offset 24
 	movzbl	%al, %eax
-	testq	%rax, %rax
-	je	.L7
-	movl	-44(%rbp), %eax
-	movq	-64(%rbp), %rdx
-	subq	%rax, %rdx
-	movq	-56(%rbp), %rax
-	addq	%rdx, %rax
-	movq	%rax, -16(%rbp)
-	movq	-56(%rbp), %rax
-	movl	-44(%rbp), %ecx
-	movl	$0, %edx
-	divq	%rcx
-	movq	%rdx, -8(%rbp)
-	movl	-44(%rbp), %eax
-	subq	-8(%rbp), %rax
-	movq	%rax, %rdx
-	movq	-56(%rbp), %rax
-	addq	%rdx, %rax
-	movq	%rax, -40(%rbp)
-	jmp	.L8
-.L11:
-	movq	-40(%rbp), %rax
-	movq	%rax, %rdi
-	call	nonzero_chunk@PLT
-	testq	%rax, %rax
-	je	.L9
-	movl	$0, %eax
-	jmp	.L10
-.L9:
-	movl	-44(%rbp), %eax
-	addq	%rax, -40(%rbp)
-.L8:
-	movq	-40(%rbp), %rax
-	cmpq	-16(%rbp), %rax
-	jb	.L11
-	movq	-16(%rbp), %rax
-	movq	%rax, %rdi
-	call	nonzero_chunk@PLT
-	testq	%rax, %rax
-	je	.L12
-	movl	$0, %eax
-	jmp	.L10
-.L7:
-	movq	-56(%rbp), %rax
-	movq	%rax, -32(%rbp)
-	movq	-56(%rbp), %rdx
-	movq	-64(%rbp), %rax
-	addq	%rdx, %rax
-	movq	%rax, -24(%rbp)
-	movb	$0, -45(%rbp)
-.L13:
-	movq	-32(%rbp), %rax
-	leaq	1(%rax), %rdx
-	movq	%rdx, -32(%rbp)
-	movzbl	(%rax), %eax
-	orb	%al, -45(%rbp)
-	movq	-32(%rbp), %rax
-	cmpq	-24(%rbp), %rax
-	jb	.L13
-	cmpb	$0, -45(%rbp)
+	popq	%rbx
+	.cfi_def_cfa_offset 16
+	popq	%rbp
+	.cfi_def_cfa_offset 8
+	ret
+	.p2align 4,,10
+	.p2align 3
+.L17:
+	.cfi_restore 3
+	.cfi_restore 6
+	addq	%rdi, %rsi
+	xorl	%eax, %eax
+	.p2align 4,,10
+	.p2align 3
+.L21:
+	addq	$1, %rdi
+	orb	-1(%rdi), %al
+	cmpq	%rdi, %rsi
+	ja	.L21
+	testb	%al, %al
 	sete	%al
 	movzbl	%al, %eax
-	jmp	.L10
-.L12:
-	movl	$1, %eax
-.L10:
-	leave
-	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
-.LFE7:
+.LFE53:
 	.size	buffer_is_zero_fast, .-buffer_is_zero_fast
 	.ident	"GCC: (Ubuntu 9.4.0-1ubuntu1~20.04.1) 9.4.0"
 	.section	.note.GNU-stack,"",@progbits
