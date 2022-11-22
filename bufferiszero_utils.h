@@ -5,6 +5,8 @@
 
 #define DEFAULT_BUF_SIZ 4096
 
+#define MAX_LOG_LEN 2048
+
 enum error_names
 {
     ERR_INC_INPUT = -5
@@ -18,6 +20,8 @@ typedef struct args_t
 }args_t;
 
 int parse_args(int argc, char** argv, args_t* arg);
+
+void log_to_file(const char* fmt, ...);
 
 
 #define unlikely(expr) __builtin_expect((expr), 0)
