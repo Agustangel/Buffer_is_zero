@@ -44,6 +44,14 @@ int main(int argc, char** argv)
 	int res = test_zero_buffer(buf, size);
 	if (res != 0)
 		return EXIT_FAILURE;
+
+	// TODO: structurize tests
+	size_t size_not_div_8 = 511;
+	char* test_buf = (char*) calloc(size_not_div_8, 1);
+	position_nonzero_elem(buf, -1, 0);
+	res = test_zero_buffer(test_buf, size_not_div_8);
+	if (res != 0)
+		return EXIT_FAILURE;
 		
 
 #ifdef __SANITIZE_ADDRESS__
