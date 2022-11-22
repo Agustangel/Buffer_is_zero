@@ -23,13 +23,15 @@ int buffer_is_zero(void* vbuf, size_t size)
             return 0;
     }
     // process remaining bytes
-    for (int idx = last_word_pos; idx < size; ++idx) 
-    {
-        if (buf[idx])
-            return 0;
-    }
+    const char *current_byte = &buf[last_word_pos];
+    const char *end = &buf[size - 1];
+    unsigned char t = 0;
+    do
+        {
+            t |= *(current_byte++);
+        } while (current_byte < end);
 
-	return 1;
+    return t == 0;
 }
 
 int buffer_is_zero_fast(void* vbuf, size_t size)

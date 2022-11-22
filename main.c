@@ -44,6 +44,7 @@ int main(int argc, char** argv)
 	int res = test_zero_buffer(buf, size);
 	if (res != 0)
 		return EXIT_FAILURE;
+		
 
 #ifdef __SANITIZE_ADDRESS__
 	return 0;
