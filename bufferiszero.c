@@ -17,7 +17,7 @@ int buffer_is_zero(void* vbuf, size_t size)
     // process until less than word_length bytes remain
 	for (int idx = 0; idx + word_length <= size; idx += word_length) 
     {
-        chunk = buf[idx];
+        memcpy(&chunk, buf + idx, sizeof(size_t));
         last_word_pos = idx;
         if (chunk)
             return 0;
