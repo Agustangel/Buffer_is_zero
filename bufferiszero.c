@@ -10,9 +10,25 @@
 int buffer_is_zero(void* vbuf, size_t size)
 {
 	char* buf = (char*) vbuf;
-	for (size_t i = 0; i < size; i++)
-		if (buf[i])
-			return 0;
+    const size_t word_length = sizeof(size_t);
+    size_t chunk = 0;
+    size_t last_word_pos = 0;
+
+    // process until less than word_length bytes remain
+	for (int idx = 0; idx + word_length <= size; idx += word_length) 
+    {
+        chunk = buf[idx];
+        last_word_pos = idx;
+        if (chunk)
+            return 0;
+    }
+    // process remaining bytes
+    for (int idx = last_word_pos; idx < size; ++idx) 
+    {
+        if (buf[idx])
+            return 0;
+    }
+
 	return 1;
 }
 
