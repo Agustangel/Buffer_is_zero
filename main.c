@@ -37,6 +37,8 @@ int main(int argc, char** argv)
 
 	size_t size = args.size;
 	char* buf = (char*) calloc(size, 1);	
+	perf_measure(perf_fd, &cnt0);
+	buffer_is_zero(buf, size);
 		
 
 #ifdef __SANITIZE_ADDRESS__
