@@ -13,14 +13,14 @@ buffer_is_zero:
 	.p2align 4,,10
 	.p2align 3
 .L4:
-	cmpq	$0, -8(%rdi,%rax)
-	movq	%rcx, %rdx
+	cmpq	$0, -8(%rdi,%rax) #
+	movq	%rcx, %rdx #
 	jne	.L6
 .L2:
-	movq	%rax, %rcx
-	addq	$8, %rax
-	cmpq	%rsi, %rax
-	jbe	.L4
+	movq	%rax, %rcx #
+	addq	$8, %rax #
+	cmpq	%rsi, %rax #
+	jbe	.L4 #
 	leaq	(%rdi,%rdx), %rax
 	leaq	-1(%rdi,%rsi), %rcx
 	xorl	%edx, %edx

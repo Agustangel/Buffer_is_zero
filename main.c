@@ -37,25 +37,6 @@ int main(int argc, char** argv)
 
 	size_t size = args.size;
 	char* buf = (char*) calloc(size, 1);
-
-	// TODO make position and value of non-zero element configurable
-	position_nonzero_elem(buf, args.position, args.value);
-	
-	char* test_buf = (char*) calloc(size, 1);
-	position_nonzero_elem(test_buf, -1, 0);
-	int res = test_zero_buffer(test_buf, size, 1);
-	if (res != 0)
-		return EXIT_FAILURE;
-	free(test_buf);
-
-	// TODO: structurize tests
-	size_t size_not_div_8 = 511;
-	test_buf = (char*) calloc(size_not_div_8, 1);
-	position_nonzero_elem(test_buf, 10, 10);
-	res = test_zero_buffer(test_buf, size_not_div_8, 0);
-	if (res != 0)
-		return EXIT_FAILURE;
-	free(test_buf);
 		
 
 #ifdef __SANITIZE_ADDRESS__
