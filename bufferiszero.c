@@ -9,22 +9,22 @@
 
 int buffer_is_zero(void* vbuf, size_t size)
 {
-	char* buf = (char*) vbuf;
+	// void* buf = (void*) vbuf;
     const size_t word_length = sizeof(size_t);
     size_t chunk = 0;
     size_t last_word_pos = 0;
 
     // process until less than word_length bytes remain
-	for (int idx = 0; idx + word_length <= size; idx += word_length) 
+	for (unsigned long idx = 0; idx + word_length <= size; idx += word_length) 
     {
-        memcpy(&chunk, buf + idx, sizeof(size_t));
+        memcpy(&chunk, vbuf + idx, sizeof(size_t));
         last_word_pos = idx;
         if (chunk)
             return 0;
     }
     // process remaining bytes
-    const char *current_byte = &buf[last_word_pos];
-    const char *end = &buf[size - 1];
+    const char *current_byte = vbuf + last_word_pos;
+    const char *end = vbuf + size - 1;
     unsigned char t = 0;
     do
         {
