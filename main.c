@@ -36,7 +36,7 @@ int main(int argc, char** argv)
 	}
 
 	size_t size = args.size;
-	char* buf = (char*) calloc(size, 1);
+	char* buf = (char*) calloc(size, 1);	
 		
 
 #ifdef __SANITIZE_ADDRESS__
