@@ -8,37 +8,41 @@ buffer_is_zero:
 	.cfi_startproc
 	endbr64
 	xorl	%eax, %eax
-	xorl	%edx, %edx
 	jmp	.L2
 	.p2align 4,,10
 	.p2align 3
 .L4:
-	cmpq	$0, -8(%rdi,%rax) #
-	movq	%rcx, %rdx #
-	jne	.L6
+	cmpq	$0, -8(%rdi,%rax)
+	jne	.L7
 .L2:
-	movq	%rax, %rcx #
-	addq	$8, %rax #
-	cmpq	%rsi, %rax #
-	jbe	.L4 #
-	leaq	(%rdi,%rdx), %rax
-	leaq	-1(%rdi,%rsi), %rcx
+	addq	$8, %rax
+	cmpq	%rsi, %rax
+	jbe	.L4
+	movq	%rsi, %rax
+	andq	$-8, %rax
+	addq	%rdi, %rax
+	addq	%rsi, %rdi
+	cmpq	%rdi, %rax
+	jnb	.L8
 	xorl	%edx, %edx
 	.p2align 4,,10
 	.p2align 3
-.L5:
+.L6:
 	addq	$1, %rax
 	orb	-1(%rax), %dl
-	cmpq	%rax, %rcx
-	ja	.L5
+	cmpq	%rax, %rdi
+	jne	.L6
 	xorl	%eax, %eax
 	testb	%dl, %dl
 	sete	%al
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L6:
+.L7:
 	xorl	%eax, %eax
+	ret
+.L8:
+	movl	$1, %eax
 	ret
 	.cfi_endproc
 .LFE52:
@@ -51,7 +55,7 @@ buffer_is_zero_fast:
 	.cfi_startproc
 	endbr64
 	cmpq	$15, %rsi
-	jbe	.L10
+	jbe	.L12
 	pushq	%rbp
 	.cfi_def_cfa_offset 16
 	.cfi_offset 6, -16
@@ -64,19 +68,19 @@ buffer_is_zero_fast:
 	subq	$8, %rsp
 	.cfi_def_cfa_offset 32
 	cmpq	%rbx, %rbp
-	ja	.L13
-	jmp	.L11
+	ja	.L15
+	jmp	.L13
 	.p2align 4,,10
 	.p2align 3
-.L22:
+.L24:
 	addq	$16, %rbx
 	cmpq	%rbx, %rbp
-	jbe	.L11
-.L13:
+	jbe	.L13
+.L15:
 	movq	%rbx, %rdi
 	call	nonzero_chunk@PLT
 	testq	%rax, %rax
-	je	.L22
+	je	.L24
 	addq	$8, %rsp
 	.cfi_remember_state
 	.cfi_def_cfa_offset 24
@@ -88,7 +92,7 @@ buffer_is_zero_fast:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L11:
+.L13:
 	.cfi_restore_state
 	movq	%rbp, %rdi
 	call	nonzero_chunk@PLT
@@ -104,18 +108,18 @@ buffer_is_zero_fast:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L10:
+.L12:
 	.cfi_restore 3
 	.cfi_restore 6
 	addq	%rdi, %rsi
 	xorl	%eax, %eax
 	.p2align 4,,10
 	.p2align 3
-.L14:
+.L16:
 	addq	$1, %rdi
 	orb	-1(%rdi), %al
 	cmpq	%rdi, %rsi
-	ja	.L14
+	ja	.L16
 	testb	%al, %al
 	sete	%al
 	movzbl	%al, %eax

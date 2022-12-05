@@ -12,18 +12,17 @@ int buffer_is_zero(void* vbuf, size_t size)
 	char* buf = (char*) vbuf;
     const size_t word_length = sizeof(size_t);
     size_t chunk = 0;
-    size_t last_word_pos = 0;
+    size_t last_chunk_pos = size  - size % 8;
 
     // process until less than word_length bytes remain
 	for (unsigned long idx = 0; idx + word_length <= size; idx += word_length) 
     {
         memcpy(&chunk, buf + idx, sizeof(size_t));
-        last_word_pos = idx + word_length;
         if (chunk)
             return 0;
     }
     // process remaining bytes
-    const char *current_byte = buf + last_word_pos;
+    const char *current_byte = buf + last_chunk_pos;
     const char *end = buf + size;
     unsigned char t = 0;
     while (current_byte < end)
