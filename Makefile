@@ -2,20 +2,18 @@ CFLAGS ?= -O2 -g1
 
 CFLAGS += -Wall -falign-loops=32
 
-TESTS = tests.sh
-
 test: CC += -fsanitize=address,undefined
 test: CFLAGS += -fno-omit-frame-pointer
 
 P := biz
 
+
 V := test perf
 all: $V
-.PHONY: $V all clean
+.PHONY: $V all clean unit_tests
 
-$V: %: $P.%
+$V: %: $P.% unit_tests
 	./$<
-	./$(TESTS)
 
 OBJ := main.o bufferiszero.o bufferiszero_utils.o tests.o
 
@@ -24,6 +22,9 @@ OBJ-perf := $(addprefix .o/perf/, $(OBJ))
 
 $P.test: $(OBJ-test)
 $P.perf: $(OBJ-perf)
+
+unit_tests: $P.test
+	./tests.sh
 
 $(V:%=$P.%): %:
 	$(CC) -o $@ $^
