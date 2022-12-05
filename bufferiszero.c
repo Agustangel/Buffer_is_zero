@@ -12,7 +12,7 @@ int buffer_is_zero(void* vbuf, size_t size)
 	char* buf = (char*) vbuf;
     const size_t word_length = sizeof(size_t);
     size_t chunk = 0;
-    size_t last_chunk_pos = size  - size % 8;
+    size_t last_chunk_pos = size  - size % sizeof(size_t);
 
     
     // process until less than word_length bytes remain
