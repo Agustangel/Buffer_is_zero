@@ -6,9 +6,6 @@
 #include "perfcnt.h"
 #include "tests.h"
 
-//! const for describing input parameters
-static const char* USAGE = "Usage: ./biz.perf <size> [<pos>:<val>]\n";
-
 
 #ifdef __SANITIZE_ADDRESS__
 const char *__asan_default_options(void)
@@ -30,6 +27,10 @@ int main(int argc, char** argv)
 	// TODO make size configurable from command line
 	args_t args;
 	parse_args(argc, argv, &args);
+	int expected_value = 1;
+	if (args.position >= 0 && args.value > 0) {
+		expected_value = 0;
+	}
 
 	size_t size = args.size;
 	char* buf = (char*) calloc(size, 1);
@@ -38,14 +39,11 @@ int main(int argc, char** argv)
 	}
 	perf_measure(perf_fd, &cnt0);
 	int res = buffer_is_zero(buf, size);
-	if (args.position >= 0 && args.value > 0 && res == 1) {
+	if (expected_value != res) {
 		printf("ERROR: test case (%ld, %d, %d), expected: %d, got: %d\n", args.size, args.position, args.value, 0, 1);
 		return 1;
 	}
-	if (args.position < 0 && args.value < 0 && res == 0) {
-		printf("ERROR: test case (%ld, %d, %d), expected: %d, got: %d\n", args.size, args.position, args.value, 1, 0);
-		return 1;
-	}
+	
 	
 		
 
