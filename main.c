@@ -36,9 +36,21 @@ int main(int argc, char** argv)
 	}
 
 	size_t size = args.size;
-	char* buf = (char*) calloc(size, 1);	
+	char* buf = (char*) calloc(size, 1);
+	if (args.position > 0) {
+		buf[args.position] = args.value;
+	}
 	perf_measure(perf_fd, &cnt0);
-	buffer_is_zero(buf, size);
+	int res = buffer_is_zero(buf, size);
+	if (args.position >= 0 && args.value > 0 && res == 1) {
+		printf("ERROR: bufferiszero result mismatches expected result\n");
+		return 1;
+	}
+	if (args.position < 0 && args.value < 0 && res == 0) {
+		printf("ERROR: bufferiszero result mismatches expected result\n");
+		return 1;
+	}
+	
 		
 
 #ifdef __SANITIZE_ADDRESS__

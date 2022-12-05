@@ -13,6 +13,7 @@ int parse_args(int argc, char** argv, args_t* args)
 	if (argc == 1) {
 
         args->position = -1;
+        args->value = -1;
         args->size = DEFAULT_BUF_SIZ;
         return 0;
         
