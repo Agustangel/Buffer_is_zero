@@ -2,6 +2,8 @@ CFLAGS ?= -O2 -g1
 
 CFLAGS += -Wall -falign-loops=32
 
+TESTS = tests.sh
+
 test: CC += -fsanitize=address,undefined
 test: CFLAGS += -fno-omit-frame-pointer
 
@@ -13,6 +15,7 @@ all: $V
 
 $V: %: $P.%
 	./$<
+	./$(TESTS)
 
 OBJ := main.o bufferiszero.o bufferiszero_utils.o tests.o
 

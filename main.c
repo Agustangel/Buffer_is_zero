@@ -43,11 +43,11 @@ int main(int argc, char** argv)
 	perf_measure(perf_fd, &cnt0);
 	int res = buffer_is_zero(buf, size);
 	if (args.position >= 0 && args.value > 0 && res == 1) {
-		printf("ERROR: bufferiszero result mismatches expected result\n");
+		printf("ERROR: test case (%ld, %d, %d), expected: %d, got: %d\n", args.size, args.position, args.value, 0, 1);
 		return 1;
 	}
 	if (args.position < 0 && args.value < 0 && res == 0) {
-		printf("ERROR: bufferiszero result mismatches expected result\n");
+		printf("ERROR: test case (%ld, %d, %d), expected: %d, got: %d\n", args.size, args.position, args.value, 1, 0);
 		return 1;
 	}
 	
