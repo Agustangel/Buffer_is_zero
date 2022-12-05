@@ -7,7 +7,7 @@
 #include "bufferiszero_utils.h"
 
 
-int parse_args(int argc, char** argv, args_t* args)
+void parse_args(int argc, char** argv, args_t* args)
 {
     // Default buffer initialization
 	if (argc == 1) {
@@ -15,8 +15,7 @@ int parse_args(int argc, char** argv, args_t* args)
         args->position = -1;
         args->value = -1;
         args->size = DEFAULT_BUF_SIZ;
-        return 0;
-        
+        return;
     }
 
     args->size = strtoll(argv[1], &argv[1], 10);
@@ -29,7 +28,6 @@ int parse_args(int argc, char** argv, args_t* args)
         args->value = -1;
     }
 
-	return 0;
 }
 
 uint64_t nonzero_chunk(const char *p)

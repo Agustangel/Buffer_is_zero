@@ -14,6 +14,7 @@ int buffer_is_zero(void* vbuf, size_t size)
     size_t chunk = 0;
     size_t last_chunk_pos = size  - size % 8;
 
+    
     // process until less than word_length bytes remain
 	for (unsigned long idx = 0; idx + word_length <= size; idx += word_length) 
     {

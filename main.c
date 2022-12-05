@@ -29,11 +29,7 @@ int main(int argc, char** argv)
 
 	// TODO make size configurable from command line
 	args_t args;
-	int ret = parse_args(argc, argv, &args);
-	if (ret < 0) {
-		printf("Usage: %s\n", USAGE);
-		return EXIT_FAILURE;
-	}
+	parse_args(argc, argv, &args);
 
 	size_t size = args.size;
 	char* buf = (char*) calloc(size, 1);

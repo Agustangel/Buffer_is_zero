@@ -19,7 +19,7 @@ typedef struct args_t
     int value;
 }args_t;
 
-int parse_args(int argc, char** argv, args_t* arg);
+void parse_args(int argc, char** argv, args_t* arg);
 
 void log_to_file(const char* fmt, ...);
 
