@@ -19,8 +19,14 @@ int parse_args(int argc, char** argv, args_t* args)
     }
 
     args->size = strtoll(argv[1], &argv[1], 10);
-    char* arg = argv[2];
-    sscanf(arg, "%d:%d", &args->position, &args->value);
+
+    if (argc == 3) {
+        char* arg = argv[2];
+        sscanf(arg, "%d:%d", &args->position, &args->value);
+    } else {
+        args->position = -1;
+        args->value = -1;
+    }
 
 	return 0;
 }
