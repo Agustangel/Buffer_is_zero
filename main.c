@@ -33,7 +33,7 @@ int main(int argc, char** argv)
 
 	size_t size = args.size;
 	char* buf = (char*) calloc(size, 1);
-	if (args.position > 0) {
+	if (args.position >= 0) {
 		buf[args.position] = args.value;
 	}
 	perf_measure(perf_fd, &cnt0);
