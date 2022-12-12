@@ -12,17 +12,14 @@ int buffer_is_zero(void* vbuf, size_t size)
 	char* buf = (char*) vbuf;
     const size_t word_length = sizeof(size_t);
     size_t chunk = 0;
-    size_t last_chunk_pos = size  - size % (4 * word_length);
+    size_t last_chunk_pos = size  - size % (2 * word_length);
 
-    int half_size = size / 2;
-    int third_size = size / 3;
-    int fourth_size = size / 4;
-    int fifth_size = size / 5;
     int double_word_length = 2 * word_length;
     int triple_word_length = 3 * word_length;
     int quadr_word_length = 4 * word_length;
+    int fifth_word_length = 5 * word_length;
     // process until less than word_length bytes remain
-	for (unsigned long idx = 0; idx + quadr_word_length <= fourth_size; idx += quadr_word_length) 
+	for (unsigned long idx = 0; idx + double_word_length <= size; idx += double_word_length) 
     {
         memcpy(&chunk, buf + idx, sizeof(size_t));
         if (chunk)
@@ -30,62 +27,8 @@ int buffer_is_zero(void* vbuf, size_t size)
         memcpy(&chunk, buf + idx + word_length, sizeof(size_t));
         if (chunk) 
             return 0;
-        memcpy(&chunk, buf + idx + 2 * word_length, sizeof(size_t));
-        if (chunk) 
-            return 0;
-        memcpy(&chunk, buf + idx + 3 * word_length, sizeof(size_t));
-        if (chunk) 
-            return 0;
-            
     }
-	for (unsigned long idx = fourth_size; idx + quadr_word_length <= 2 * fourth_size; idx += quadr_word_length) 
-    {
-        memcpy(&chunk, buf + idx, sizeof(size_t));
-        if (chunk)
-            return 0;
-        memcpy(&chunk, buf + idx + word_length, sizeof(size_t));
-        if (chunk) 
-            return 0;
-        memcpy(&chunk, buf + idx + 2 * word_length, sizeof(size_t));
-        if (chunk) 
-            return 0;
-        memcpy(&chunk, buf + idx + 3 * word_length, sizeof(size_t));
-        if (chunk) 
-            return 0;
-            
-    }
-    for (unsigned long idx = fourth_size * 2; idx + quadr_word_length <= 3 * fourth_size; idx += quadr_word_length) 
-    {
-        memcpy(&chunk, buf + idx, sizeof(size_t));
-        if (chunk)
-            return 0;
-        memcpy(&chunk, buf + idx + word_length, sizeof(size_t));
-        if (chunk) 
-            return 0;
-        memcpy(&chunk, buf + idx + 2 * word_length, sizeof(size_t));
-        if (chunk) 
-            return 0;
-        memcpy(&chunk, buf + idx + 3 * word_length, sizeof(size_t));
-        if (chunk) 
-            return 0;
-            
-    }
-    	for (unsigned long idx = fourth_size * 3; idx + quadr_word_length <= size; idx += quadr_word_length) 
-    {
-        memcpy(&chunk, buf + idx, sizeof(size_t));
-        if (chunk)
-            return 0;
-        memcpy(&chunk, buf + idx + word_length, sizeof(size_t));
-        if (chunk) 
-            return 0;
-        memcpy(&chunk, buf + idx + 2 * word_length, sizeof(size_t));
-        if (chunk) 
-            return 0;
-        memcpy(&chunk, buf + idx + 3 * word_length, sizeof(size_t));
-        if (chunk) 
-            return 0;
-            
-    }
+
     // process remaining bytes
     const char *current_byte = buf + last_chunk_pos;
     const char *end = buf + size;
