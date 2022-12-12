@@ -12,14 +12,27 @@ int buffer_is_zero(void* vbuf, size_t size)
 	char* buf = (char*) vbuf;
     const size_t word_length = sizeof(size_t);
     size_t chunk = 0;
-    size_t last_chunk_pos = size  - size % sizeof(size_t);
+    size_t last_chunk_pos = size  - size % (2 * word_length);
 
-    
+    int half_size = size / 2;
+    int double_word_length = 2 * word_length;
     // process until less than word_length bytes remain
-	for (unsigned long idx = 0; idx + word_length <= size; idx += word_length) 
+	for (unsigned long idx = 0; idx + double_word_length <= half_size; idx += double_word_length) 
     {
         memcpy(&chunk, buf + idx, sizeof(size_t));
         if (chunk)
+            return 0;
+        memcpy(&chunk, buf + idx + word_length, sizeof(size_t));
+        if (chunk) 
+            return 0;
+    }
+    for (unsigned long idx = half_size; idx + double_word_length <= size; idx += double_word_length) 
+    {
+        memcpy(&chunk, buf + idx, sizeof(size_t));
+        if (chunk)
+            return 0;
+        memcpy(&chunk, buf + idx + word_length, sizeof(size_t));
+        if (chunk) 
             return 0;
     }
     // process remaining bytes
