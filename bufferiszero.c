@@ -12,7 +12,7 @@ int buffer_is_zero(void* vbuf, size_t size)
 	char* buf = (char*) vbuf;
     const size_t word_length = sizeof(size_t);
     size_t chunk = 0;
-    size_t last_chunk_pos = size  - size % (3 * word_length);
+    size_t last_chunk_pos = size  - size % (4 * word_length);
 
     int double_word_length = 2 * word_length;
     int triple_word_length = 3 * word_length;
