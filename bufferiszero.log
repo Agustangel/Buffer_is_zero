@@ -490,3 +490,23 @@
 6.92 bytes/cycle, 3.08 instructions/cycle
 
 
+491 cycles minimum for 4096 bytes
+8.34 bytes/cycle, 3.15 instructions/cycle
+
+
+498 cycles minimum for 4096 bytes
+8.22 bytes/cycle, 3.11 instructions/cycle
+
+
+494 cycles minimum for 4096 bytes
+8.29 bytes/cycle, 3.14 instructions/cycle
+
+
+524 cycles minimum for 4096 bytes
+7.82 bytes/cycle, 3.1 instructions/cycle
+
+
+522 cycles minimum for 4096 bytes
+7.85 bytes/cycle, 3.11 instructions/cycle
+
+
