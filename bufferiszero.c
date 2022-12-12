@@ -19,7 +19,7 @@ int buffer_is_zero(void* vbuf, size_t size)
     int quadr_word_length = 4 * word_length;
     int fifth_word_length = 5 * word_length;
     // process until less than word_length bytes remain
-	for (unsigned long idx = 0; idx + triple_word_length <= size; idx += triple_word_length) 
+	for (unsigned long idx = 0; idx + quadr_word_length <= size; idx += quadr_word_length) 
     {
         memcpy(&chunk, buf + idx, sizeof(size_t));
         if (chunk)
@@ -28,6 +28,9 @@ int buffer_is_zero(void* vbuf, size_t size)
         if (chunk) 
             return 0;
         memcpy(&chunk, buf + idx + 2 * word_length, sizeof(size_t));
+        if (chunk) 
+            return 0;
+        memcpy(&chunk, buf + idx + 3 * word_length, sizeof(size_t));
         if (chunk) 
             return 0;
     }
