@@ -14,28 +14,57 @@ int buffer_is_zero(void* vbuf, size_t size)
     size_t chunk = 0;
     size_t last_chunk_pos = size  - size % (5 * word_length);
 
-    int double_word_length = 2 * word_length;
-    int triple_word_length = 3 * word_length;
-    int quadr_word_length = 4 * word_length;
-    int fifth_word_length = 5 * word_length;
+    // int double_word_length = 2 * word_length;
+    // int triple_word_length = 3 * word_length;
+    // int quadr_word_length  = 4 * word_length;
+    int fifth_word_length  = 5 * word_length;
+    //int six_word_length    = 6 * word_length;
+    //int seven_word_length  = 7 * word_length;
+    // int eight_word_length  = 8 * word_length;
+    //int nine_word_length   = 9 * word_length;
+    //int ten_word_length = 10 * word_length;
+
     // process until less than word_length bytes remain
+    // for (unsigned long idx = 0; idx + word_length <= size; idx += word_length) {
+    //     memcpy(&chunk, buf + idx, sizeof(size_t));
+    //     if (chunk)
+    //         return 0;
+    // }
 	for (unsigned long idx = 0; idx + fifth_word_length <= size; idx += fifth_word_length) 
     {
-        memcpy(&chunk, buf + idx, sizeof(size_t));
+        chunk = *((size_t*) buf + idx) + *((size_t*) buf + idx + word_length) + *((size_t*)buf + idx + 2 * word_length) + *((size_t*)buf + idx + 3 * word_length) + *((size_t*)buf + idx + 4 * word_length);
         if (chunk)
             return 0;
-        memcpy(&chunk, buf + idx + word_length, sizeof(size_t));
-        if (chunk) 
-            return 0;
-        memcpy(&chunk, buf + idx + 2 * word_length, sizeof(size_t));
-        if (chunk) 
-            return 0;
-        memcpy(&chunk, buf + idx + 3 * word_length, sizeof(size_t));
-        if (chunk) 
-            return 0;
-        memcpy(&chunk, buf + idx + 4 * word_length, sizeof(size_t));
-        if (chunk) 
-            return 0;
+        // memcpy(&chunk, buf + idx, sizeof(size_t));
+        // if (chunk)
+        //     return 0;
+        // memcpy(&chunk, buf + idx + word_length, sizeof(size_t));
+        // if (chunk) 
+        //     return 0;
+        // memcpy(&chunk, buf + idx + 2 * word_length, sizeof(size_t));
+        // if (chunk) 
+        //     return 0;
+        // memcpy(&chunk, buf + idx + 3 * word_length, sizeof(size_t));
+        // if (chunk) 
+        //     return 0;
+        // memcpy(&chunk, buf + idx + 4 * word_length, sizeof(size_t));
+        // if (chunk) 
+        //     return 0;
+        // memcpy(&chunk, buf + idx + 5 * word_length, sizeof(size_t));
+        // if (chunk)
+        //     return 0;
+        // memcpy(&chunk, buf + idx + 6 * word_length, sizeof(size_t));
+        // if (chunk)
+        //     return 0;
+        // memcpy(&chunk, buf + idx + 7 * word_length, sizeof(size_t));
+        // if (chunk)
+        //     return 0;
+        // memcpy(&chunk, buf + idx + 8 * word_length, sizeof(size_t));
+        // if (chunk)
+        //     return 0;
+        // memcpy(&chunk, buf + idx + 9 * word_length, sizeof(size_t));
+        // if (chunk)
+        //     return 0;
     }
 
     // process remaining bytes

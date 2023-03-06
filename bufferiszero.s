@@ -7,20 +7,35 @@ buffer_is_zero:
 .LFB52:
 	.cfi_startproc
 	endbr64
-	xorl	%eax, %eax
+	movl	$40, %r9d
+	movq	%rdi, %rcx
+	subq	%rdi, %r9
 	jmp	.L2
 	.p2align 4,,10
 	.p2align 3
 .L4:
-	cmpq	$0, -8(%rdi,%rax)
+	movq	%rcx, %rdx
+	addq	$40, %rcx
+	movsbl	8(%rdx), %r8d
+	movsbl	(%rdx), %eax
+	addl	%r8d, %eax
+	movsbl	16(%rdx), %r8d
+	addl	%r8d, %eax
+	movsbl	24(%rdx), %r8d
+	movsbl	32(%rdx), %edx
+	addl	%r8d, %eax
+	addl	%edx, %eax
 	jne	.L7
 .L2:
-	addq	$8, %rax
-	cmpq	%rsi, %rax
-	jbe	.L4
+	leaq	(%r9,%rcx), %rax
+	cmpq	%rax, %rsi
+	jnb	.L4
+	movabsq	$-3689348814741910323, %rdx
 	movq	%rsi, %rax
-	andq	$-8, %rax
-	addq	%rdi, %rax
+	mulq	%rdx
+	shrq	$5, %rdx
+	leaq	(%rdx,%rdx,4), %rax
+	leaq	(%rdi,%rax,8), %rax
 	addq	%rsi, %rdi
 	cmpq	%rdi, %rax
 	jnb	.L8
