@@ -8,11 +8,11 @@
 
 int buffer_is_zero(void *vbuf, size_t size) {
   char *buf = (char *)vbuf;
-  const size_t word_length = sizeof(size_t);
+  uint64_t word_length = 0;
+  uint64_t quadr_word_length = 4 * word_length;
 
-  size_t chunk = 0;
-  size_t last_chunk_pos = size - size % (5 * word_length);
-  int quadr_word_length = 4 * word_length;
+  uint64_t chunk = 0;
+  uint64_t last_chunk_pos = size - size % (5 * word_length);
 
   uint32_t *start = (uint32_t *)buf;
   for (unsigned long idx = 0; idx + quadr_word_length <= size;
