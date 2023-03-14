@@ -8,7 +8,7 @@
 
 int buffer_is_zero(void *vbuf, size_t size) {
   char *buf = (char *)vbuf;
-  uint64_t word_length = 0;
+  uint64_t word_length = 8;
   uint64_t quadr_word_length = 4 * word_length;
 
   uint64_t chunk = 0;
