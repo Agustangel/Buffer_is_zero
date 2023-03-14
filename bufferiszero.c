@@ -1,114 +1,68 @@
-#include <ctype.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdint.h>
 #include "bufferiszero.h"
 #include "bufferiszero_utils.h"
+#include <ctype.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
+int buffer_is_zero(void *vbuf, size_t size) {
+  char *buf = (char *)vbuf;
+  const size_t word_length = sizeof(size_t);
 
-int buffer_is_zero(void* vbuf, size_t size)
-{
-	char* buf = (char*) vbuf;
-    const size_t word_length = sizeof(size_t);
-    size_t chunk = 0;
-    size_t last_chunk_pos = size  - size % (5 * word_length);
+  size_t chunk = 0;
+  size_t last_chunk_pos = size - size % (5 * word_length);
+  int quadr_word_length = 4 * word_length;
 
-    // int double_word_length = 2 * word_length;
-    // int triple_word_length = 3 * word_length;
-    // int quadr_word_length  = 4 * word_length;
-    int fifth_word_length  = 5 * word_length;
-    //int six_word_length    = 6 * word_length;
-    //int seven_word_length  = 7 * word_length;
-    // int eight_word_length  = 8 * word_length;
-    //int nine_word_length   = 9 * word_length;
-    //int ten_word_length = 10 * word_length;
+  uint32_t *start = (uint32_t *)buf;
+  for (unsigned long idx = 0; idx + quadr_word_length <= size;
+       idx += quadr_word_length) {
 
-    // process until less than word_length bytes remain
-    // for (unsigned long idx = 0; idx + word_length <= size; idx += word_length) {
-    //     memcpy(&chunk, buf + idx, sizeof(size_t));
-    //     if (chunk)
-    //         return 0;
-    // }
-	for (unsigned long idx = 0; idx + fifth_word_length <= size; idx += fifth_word_length) 
-    {
-        chunk = *((size_t*) buf + idx) + *((size_t*) buf + idx + word_length) + *((size_t*)buf + idx + 2 * word_length) + *((size_t*)buf + idx + 3 * word_length) + *((size_t*)buf + idx + 4 * word_length);
-        if (chunk)
-            return 0;
-        // memcpy(&chunk, buf + idx, sizeof(size_t));
-        // if (chunk)
-        //     return 0;
-        // memcpy(&chunk, buf + idx + word_length, sizeof(size_t));
-        // if (chunk) 
-        //     return 0;
-        // memcpy(&chunk, buf + idx + 2 * word_length, sizeof(size_t));
-        // if (chunk) 
-        //     return 0;
-        // memcpy(&chunk, buf + idx + 3 * word_length, sizeof(size_t));
-        // if (chunk) 
-        //     return 0;
-        // memcpy(&chunk, buf + idx + 4 * word_length, sizeof(size_t));
-        // if (chunk) 
-        //     return 0;
-        // memcpy(&chunk, buf + idx + 5 * word_length, sizeof(size_t));
-        // if (chunk)
-        //     return 0;
-        // memcpy(&chunk, buf + idx + 6 * word_length, sizeof(size_t));
-        // if (chunk)
-        //     return 0;
-        // memcpy(&chunk, buf + idx + 7 * word_length, sizeof(size_t));
-        // if (chunk)
-        //     return 0;
-        // memcpy(&chunk, buf + idx + 8 * word_length, sizeof(size_t));
-        // if (chunk)
-        //     return 0;
-        // memcpy(&chunk, buf + idx + 9 * word_length, sizeof(size_t));
-        // if (chunk)
-        //     return 0;
-    }
+    start = (uint32_t *)(buf + idx);
+    chunk = *(start) + *(start + 1) + *(start + 2) + *(start + 3) +
+            *(start + 4) + *(start + 5) + *(start + 6) + *(start + 7);
 
-    // process remaining bytes
-    const char *current_byte = buf + last_chunk_pos;
-    const char *end = buf + size;
-    unsigned char t = 0;
-    while (current_byte < end)
-    {
-        t |= *(current_byte++);
-    }
+    if (chunk)
+      return 0;
+  }
 
-    return t == 0;
+  // process remaining bytes
+  const char *current_byte = buf + last_chunk_pos;
+  const char *end = buf + size;
+  unsigned char t = 0;
+  while (current_byte < end) {
+    t |= *(current_byte++);
+  }
+
+  return t == 0;
 }
 
-int buffer_is_zero_fast(void* vbuf, size_t size)
-{
-    const unsigned width = sizeof(uint64_t) * 2; // 8 byte
+int buffer_is_zero_fast(void *vbuf, size_t size) {
+  const unsigned width = sizeof(uint64_t) * 2; // 8 byte
 
-    if (likely(size >= width))
-    {   
-        const char *endp = vbuf + size - width;  
-        
-        uintptr_t misalign = (uintptr_t)vbuf % width; // check if memory is aligned
-        const char *p = vbuf + width  - misalign; 
-        while (p < endp)
-        {
-            if(nonzero_chunk(p)) return 0;
-            p += width;
-        }
+  if (likely(size >= width)) {
+    const char *endp = vbuf + size - width;
 
-        if(nonzero_chunk(endp)) return 0;
-    } 
-    else
-    {
-        const unsigned char *p = vbuf;
-        const unsigned char *e = vbuf + size;
-        unsigned char t = 0;
-
-        do
-        {
-            t |= *(p++);
-        } while (p < e);
-
-        return t == 0;
+    uintptr_t misalign = (uintptr_t)vbuf % width; // check if memory is aligned
+    const char *p = vbuf + width - misalign;
+    while (p < endp) {
+      if (nonzero_chunk(p))
+        return 0;
+      p += width;
     }
-    return 1;
+
+    if (nonzero_chunk(endp))
+      return 0;
+  } else {
+    const unsigned char *p = vbuf;
+    const unsigned char *e = vbuf + size;
+    unsigned char t = 0;
+
+    do {
+      t |= *(p++);
+    } while (p < e);
+
+    return t == 0;
+  }
+  return 1;
 }
