@@ -9,22 +9,30 @@
 int buffer_is_zero(void *vbuf, size_t size) {
   char *buf = (char *)vbuf;
   uint64_t word_length = 8;
-  uint64_t quadr_word_length = 4 * word_length;
+  uint64_t eight_word_length = 8 * word_length;
 
-  uint64_t chunk = 0;
-  uint64_t last_chunk_pos = size - size % (5 * word_length);
+  uint64_t chunk0 = 0;
+  uint64_t chunk1 = 0;
+  uint64_t chunk2 = 0;
+  uint64_t chunk3 = 0;
+  size_t last_chunk_pos = size - size % (8 * word_length);
 
-  uint32_t *start = (uint32_t *)buf;
-  for (unsigned long idx = 0; idx + quadr_word_length <= size;
-       idx += quadr_word_length) {
+  uint64_t *start = (uint64_t *)buf;
+  for (unsigned long idx = 0; idx + eight_word_length <= size;
+       idx += eight_word_length) {
 
-    start = (uint32_t *)(buf + idx);
-    chunk = *(start) + *(start + 1) + *(start + 2) + *(start + 3) +
-            *(start + 4) + *(start + 5) + *(start + 6) + *(start + 7);
+    start = (uint64_t *)(buf + idx);
 
-    if (chunk)
-      return 0;
+    chunk0 |= *(start) | *(start + 1);
+    chunk1 |= *(start + 2) | *(start + 3);
+    chunk2 |= *(start + 4) | *(start + 5);
+    chunk3 |= *(start + 6) | *(start + 7);
   }
+  chunk0 |= chunk1;
+  chunk2 |= chunk3;
+  chunk0 |= chunk2;
+  if (chunk0)
+    return 0;
 
   // process remaining bytes
   const char *current_byte = buf + last_chunk_pos;
