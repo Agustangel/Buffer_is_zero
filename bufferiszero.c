@@ -15,7 +15,16 @@ int buffer_is_zero(void *vbuf, size_t size) {
   uint64_t chunk1 = 0;
   uint64_t chunk2 = 0;
   uint64_t chunk3 = 0;
-  size_t last_chunk_pos = size - size % (8 * word_length);
+  size_t last_chunk_pos = size - size % word_length;
+
+  // handle cases with buffer length less than sizeof(uint64_t) bytes
+  if (size < word_length) {
+    memcpy(&chunk0, buf, size);
+    return chunk0 == 0;
+  }
+  memcpy(&chunk0, buf, sizeof(uint64_t));
+  if (chunk0)
+    return 0;
 
   uint64_t *start = (uint64_t *)buf;
   for (unsigned long idx = 0; idx + eight_word_length <= size;

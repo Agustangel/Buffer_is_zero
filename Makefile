@@ -1,4 +1,4 @@
-CFLAGS ?= -O2 -g1
+CFLAGS ?= -O2 -g
 
 CFLAGS += -Wall -falign-loops=32
 
