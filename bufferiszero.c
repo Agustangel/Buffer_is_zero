@@ -6,8 +6,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define percent 8
-
 int buffer_is_zero(void *vbuf, size_t size) {
 
   char *buf = (char *)vbuf;
@@ -16,18 +14,9 @@ int buffer_is_zero(void *vbuf, size_t size) {
   uint64_t eight_word_length = 8 * word_length;
 
   uint64_t chunk = 0;
-  size_t start_chunk_pos = size * percent / 100 - size * percent / 100 % 8;
-  size_t last_chunk_pos = size - (size - start_chunk_pos) % eight_word_length;
+  size_t last_chunk_pos = size - size % eight_word_length;
 
-  // buffer start check
-  if (size >= 2 * word_length) {
-    chunk = (*start == 0) && !memcmp(start, start + 1, start_chunk_pos - 8);
-    if (!chunk)
-      return 0;
-  }
-  chunk = 0;
-
-  for (unsigned long idx = start_chunk_pos; idx + eight_word_length <= size;
+  for (unsigned long idx = 0; idx + eight_word_length <= size;
        idx += eight_word_length) {
 
     start = (uint64_t *)(buf + idx);
