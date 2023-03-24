@@ -1,6 +1,6 @@
 CFLAGS ?= -O2 -g
 
-CFLAGS += -Wall -falign-loops=32
+CFLAGS += -Wall -falign-loops=32 -march=native
 
 test: CC += -fsanitize=address,undefined
 test: CFLAGS += -fno-omit-frame-pointer

@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <immintrin.h>
 
 int buffer_is_zero(void *vbuf, size_t size) {
 
@@ -13,16 +14,17 @@ int buffer_is_zero(void *vbuf, size_t size) {
   uint64_t word_length = 8;
   uint64_t eight_word_length = 8 * word_length;
 
-  uint64_t chunk = 0;
+  __m512i chunk;
   size_t last_chunk_pos = size - size % eight_word_length;
+
+  __m512i zero_vec = _mm512_setzero_si512();
 
   for (unsigned long idx = 0; idx + eight_word_length <= size;
        idx += eight_word_length) {
 
-    start = (uint64_t *)(buf + idx);
-    chunk = (*(start) | *(start + 1)) | (*(start + 2) | *(start + 3)) |
-            (*(start + 4) | *(start + 5)) | (*(start + 6) | *(start + 7));
-    if (chunk)
+    chunk = _mm512_load_si512((__m512i*) (buf + idx));
+    __mmask16 mask = _mm512_cmpeq_epi32_mask(zero_vec, chunk);
+    if (mask != 0xFFFF)
       return 0;
   }
 
