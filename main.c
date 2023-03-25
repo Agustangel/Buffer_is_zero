@@ -6,6 +6,7 @@
 #include "perfcnt.h"
 #include "tests.h"
 
+
 #ifdef __SANITIZE_ADDRESS__
 const char *__asan_default_options(void) { return "detect_leaks=0"; }
 #endif

@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <immintrin.h>
+#include <xmmintrin.h>
 
 int buffer_is_zero(void *vbuf, size_t size) {
 
@@ -14,16 +15,27 @@ int buffer_is_zero(void *vbuf, size_t size) {
   uint64_t word_length = 8;
   uint64_t eight_word_length = 8 * word_length;
 
-  __m512i chunk;
+  __m128i chunk1;
+  __m128i chunk2;
+  __m128i chunk3;
+  __m128i chunk4;
   size_t last_chunk_pos = size - size % eight_word_length;
 
-  __m512i zero_vec = _mm512_setzero_si512();
+  __m128i zero_vec = _mm_setzero_si128();
 
   for (unsigned long idx = 0; idx + eight_word_length <= size;
        idx += eight_word_length) {
 
-    chunk = _mm512_load_si512((__m512i*) (buf + idx));
-    __mmask16 mask = _mm512_cmpeq_epi32_mask(zero_vec, chunk);
+    chunk1 = _mm_load_si128((__m128i*) (buf + idx));
+    chunk2 = _mm_load_si128((__m128i*) (buf + idx + 2 * sizeof(uint64_t)));
+    chunk3 = _mm_load_si128((__m128i*) (buf + idx + 4 * sizeof(uint64_t)));
+    chunk4 = _mm_load_si128((__m128i*) (buf + idx + 6 * sizeof(uint64_t)));
+
+    chunk1 = _mm_or_si128(chunk1, chunk2);
+    chunk3 = _mm_or_si128(chunk3, chunk4);
+    chunk1 = _mm_or_si128(chunk1, chunk3);
+
+    __mmask16 mask = _mm_cmpeq_epi8_mask(zero_vec, chunk1);
     if (mask != 0xFFFF)
       return 0;
   }
