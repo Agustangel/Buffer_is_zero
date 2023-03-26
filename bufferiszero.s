@@ -7,19 +7,26 @@ buffer_is_zero:
 .LFB5320:
 	.cfi_startproc
 	endbr64
-	xorl	%eax, %eax
+	xorl	%edx, %edx
 	jmp	.L2
 	.p2align 4,,10
 	.p2align 3
 .L4:
-	vpxor	%xmm0, %xmm0, %xmm0
-	vpcmpeqd	-64(%rdi,%rax), %zmm0, %k0
-	kmovw	%k0, %edx
-	cmpw	$-1, %dx
+	movdqu	-48(%rdi,%rdx), %xmm0
+	movdqu	-32(%rdi,%rdx), %xmm2
+	movdqu	-64(%rdi,%rdx), %xmm1
+	movdqu	-16(%rdi,%rdx), %xmm3
+	por	%xmm2, %xmm0
+	por	%xmm3, %xmm1
+	por	%xmm1, %xmm0
+	movhlps	%xmm0, %xmm4
+	movq	%xmm0, %rcx
+	movq	%xmm4, %rax
+	orq	%rax, %rcx
 	jne	.L7
 .L2:
-	addq	$64, %rax
-	cmpq	%rsi, %rax
+	addq	$64, %rdx
+	cmpq	%rsi, %rdx
 	jbe	.L4
 	movq	%rsi, %rax
 	andq	$-64, %rax
@@ -31,25 +38,22 @@ buffer_is_zero:
 	.p2align 4,,10
 	.p2align 3
 .L6:
-	incq	%rax
+	addq	$1, %rax
 	orb	-1(%rax), %dl
 	cmpq	%rax, %rdi
 	jne	.L6
 	xorl	%eax, %eax
 	testb	%dl, %dl
 	sete	%al
-.L10:
-	vzeroupper
 	ret
 	.p2align 4,,10
 	.p2align 3
 .L7:
 	xorl	%eax, %eax
-	vzeroupper
 	ret
 .L8:
 	movl	$1, %eax
-	jmp	.L10
+	ret
 	.cfi_endproc
 .LFE5320:
 	.size	buffer_is_zero, .-buffer_is_zero
@@ -61,7 +65,7 @@ buffer_is_zero_fast:
 	.cfi_startproc
 	endbr64
 	cmpq	$15, %rsi
-	jbe	.L13
+	jbe	.L12
 	pushq	%rbp
 	.cfi_def_cfa_offset 16
 	.cfi_offset 6, -16
@@ -74,31 +78,31 @@ buffer_is_zero_fast:
 	subq	$8, %rsp
 	.cfi_def_cfa_offset 32
 	cmpq	%rbx, %rbp
-	ja	.L16
-	jmp	.L14
+	ja	.L15
+	jmp	.L13
 	.p2align 4,,10
 	.p2align 3
-.L26:
+.L24:
 	addq	$16, %rbx
 	cmpq	%rbx, %rbp
-	jbe	.L14
-.L16:
+	jbe	.L13
+.L15:
 	movq	%rbx, %rdi
 	call	nonzero_chunk@PLT
 	testq	%rax, %rax
-	je	.L26
+	je	.L24
 	addq	$8, %rsp
 	.cfi_remember_state
 	.cfi_def_cfa_offset 24
+	xorl	%eax, %eax
 	popq	%rbx
 	.cfi_def_cfa_offset 16
-	xorl	%eax, %eax
 	popq	%rbp
 	.cfi_def_cfa_offset 8
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L14:
+.L13:
 	.cfi_restore_state
 	movq	%rbp, %rdi
 	call	nonzero_chunk@PLT
@@ -106,26 +110,26 @@ buffer_is_zero_fast:
 	sete	%al
 	addq	$8, %rsp
 	.cfi_def_cfa_offset 24
+	movzbl	%al, %eax
 	popq	%rbx
 	.cfi_def_cfa_offset 16
-	movzbl	%al, %eax
 	popq	%rbp
 	.cfi_def_cfa_offset 8
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L13:
+.L12:
 	.cfi_restore 3
 	.cfi_restore 6
 	addq	%rdi, %rsi
 	xorl	%eax, %eax
 	.p2align 4,,10
 	.p2align 3
-.L17:
-	incq	%rdi
+.L16:
+	addq	$1, %rdi
 	orb	-1(%rdi), %al
 	cmpq	%rdi, %rsi
-	ja	.L17
+	ja	.L16
 	testb	%al, %al
 	sete	%al
 	movzbl	%al, %eax
