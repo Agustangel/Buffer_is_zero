@@ -15,25 +15,26 @@ int buffer_is_zero(void *vbuf, size_t size) {
   uint64_t eight_word_length = 8 * word_length;
   size_t last_chunk_pos = size - size % eight_word_length;
 
-  typedef uint64_t v4si __attribute__ ((vector_size (16), aligned(16)));
+  typedef uint64_t v2du __attribute__ ((vector_size (16), aligned(16)));
 
-  v4si zero_vec = {0};
-  v4si chunk_1 = {0};
-  v4si chunk_2 = {0};
-  v4si chunk_3 = {0};
-  v4si chunk_4 = {0};
+  v2du zero_vec = {0};
+  v2du chunk_1 = {0};
+  v2du chunk_2 = {0};
+  v2du chunk_3 = {0};
+  v2du chunk_4 = {0};
 
   for (unsigned long idx = 0; idx + eight_word_length <= size;
        idx += eight_word_length) {
 
-    memcpy(&chunk_1, (buf + idx), sizeof(v4si));
-    memcpy(&chunk_2, (buf + idx + 2 * word_length), sizeof(v4si));
-    memcpy(&chunk_3, (buf + idx + 4 * word_length), sizeof(v4si));
-    memcpy(&chunk_4, (buf + idx + 6 * word_length), sizeof(v4si));
+    memcpy(&chunk_1, (buf + idx), sizeof(v2du));
+    memcpy(&chunk_2, (buf + idx + 2 * word_length), sizeof(v2du));
+    memcpy(&chunk_3, (buf + idx + 4 * word_length), sizeof(v2du));
+    memcpy(&chunk_4, (buf + idx + 6 * word_length), sizeof(v2du));
 
     chunk_1 = (chunk_1 | chunk_2) | (chunk_3 | chunk_4);
 
-    if (chunk_1[0] | chunk_1[1])
+    uint32_t mask = _mm_movemask_epi8(_mm_cmpeq_epi8((__m128i) chunk_1, (__m128i) zero_vec));
+    if (mask != 0xFFFF)
       return 0;
   }
 

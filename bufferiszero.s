@@ -8,21 +8,21 @@ buffer_is_zero:
 	.cfi_startproc
 	endbr64
 	xorl	%edx, %edx
+	pxor	%xmm2, %xmm2
 	jmp	.L2
 	.p2align 4,,10
 	.p2align 3
 .L4:
 	movdqu	-48(%rdi,%rdx), %xmm0
-	movdqu	-32(%rdi,%rdx), %xmm2
+	movdqu	-32(%rdi,%rdx), %xmm3
 	movdqu	-64(%rdi,%rdx), %xmm1
-	movdqu	-16(%rdi,%rdx), %xmm3
-	por	%xmm2, %xmm0
-	por	%xmm3, %xmm1
+	movdqu	-16(%rdi,%rdx), %xmm4
+	por	%xmm3, %xmm0
+	por	%xmm4, %xmm1
 	por	%xmm1, %xmm0
-	movhlps	%xmm0, %xmm4
-	movq	%xmm0, %rcx
-	movq	%xmm4, %rax
-	orq	%rax, %rcx
+	pcmpeqw	%xmm2, %xmm0
+	pmovmskb	%xmm0, %eax
+	cmpl	$65535, %eax
 	jne	.L7
 .L2:
 	addq	$64, %rdx
