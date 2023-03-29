@@ -59,9 +59,10 @@ int main(int argc, char **argv) {
       min_i = ni;
     }
   }
+  const size_t overhead = 52;
   const char *log_fmt = "%llu cycles minimum for %zu bytes\n"
                         "%.3g bytes/cycle, %.3g instructions/cycle\n";
-  printf(log_fmt, min_c, size, 1. * size / min_c, 1. * min_i / min_c);
+  printf(log_fmt, min_c - overhead, size, 1. * size / min_c, 1. * min_i / min_c);
 
   log_to_file(log_fmt, min_c, size, 1. * size / min_c, 1. * min_i / min_c);
 }
