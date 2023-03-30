@@ -13,14 +13,12 @@ buffer_is_zero:
 	.p2align 4,,10
 	.p2align 3
 .L4:
-	movdqu	-48(%rdi,%rdx), %xmm0
-	movdqu	-32(%rdi,%rdx), %xmm3
-	movdqu	-64(%rdi,%rdx), %xmm1
-	movdqu	-16(%rdi,%rdx), %xmm4
-	por	%xmm3, %xmm0
-	por	%xmm4, %xmm1
+	movdqu	-64(%rdi,%rdx), %xmm0
+	movdqu	-48(%rdi,%rdx), %xmm1
+	por	-32(%rdi,%rdx), %xmm0
+	por	-16(%rdi,%rdx), %xmm1
 	por	%xmm1, %xmm0
-	pcmpeqw	%xmm2, %xmm0
+	pcmpeqb	%xmm2, %xmm0
 	pmovmskb	%xmm0, %eax
 	cmpl	$65535, %eax
 	jne	.L7
