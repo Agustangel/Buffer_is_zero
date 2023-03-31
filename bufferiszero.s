@@ -13,9 +13,9 @@ buffer_is_zero:
 	.p2align 4,,10
 	.p2align 3
 .L4:
-	movdqu	-64(%rdi,%rdx), %xmm0
-	movdqu	-48(%rdi,%rdx), %xmm1
-	por	-32(%rdi,%rdx), %xmm0
+	movdqa	-64(%rdi,%rdx), %xmm0
+	movdqa	-32(%rdi,%rdx), %xmm1
+	por	-48(%rdi,%rdx), %xmm0
 	por	-16(%rdi,%rdx), %xmm1
 	por	%xmm1, %xmm0
 	pcmpeqb	%xmm2, %xmm0

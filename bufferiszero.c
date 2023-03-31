@@ -21,15 +21,15 @@ int buffer_is_zero(void *vbuf, size_t size) {
   v2du chunk_1 = {0};
   v2du chunk_2 = {0};
 
+  v2du *start = (v2du *)buf;
   for (unsigned long idx = 0; idx + eight_word_length <= size;
        idx += eight_word_length) {
+    
+    start = (v2du *)(buf + idx);  
 
-    memcpy(&chunk_1, (buf + idx), sizeof(v2du));
-    memcpy(&chunk_2, (buf + idx + 2 * word_length), sizeof(v2du));
-
-    chunk_1 = (v2du) _mm_or_si128((__m128i) chunk_1, *(__m128i*)(buf + idx + 4 * word_length));
-    chunk_2 = (v2du) _mm_or_si128((__m128i) chunk_2, *(__m128i*)(buf + idx + 6 * word_length));
-    chunk_1 = (v2du) _mm_or_si128((__m128i) chunk_1, (__m128i) chunk_2);
+    chunk_1 = *(start) | *(start + 1);
+    chunk_2 = *(start + 2) | *(start + 3);;
+    chunk_1 = chunk_1 | chunk_2;
 
     uint32_t mask = _mm_movemask_epi8(_mm_cmpeq_epi8((__m128i) chunk_1, (__m128i) zero_vec));
     if (mask != 0xFFFF)
