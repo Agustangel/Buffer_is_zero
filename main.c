@@ -28,7 +28,7 @@ int main(int argc, char **argv) {
   }
 
   size_t size = args.size;
-  char *buf = (char *)calloc(size, 1);
+  char *buf = 1 + (char *)calloc(size + 1, 1);
   if (args.position >= 0) {
     buf[args.position] = args.value;
   }

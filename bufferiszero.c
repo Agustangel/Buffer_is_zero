@@ -15,6 +15,15 @@ static inline int is_aligned(const void* ptr, unsigned alignment) {
   return (uintptr_t) ptr % alignment == 0;
 }
 
+static inline int bitwise_check(void *start, void* end){
+  unsigned t = 0;
+  char* curr = (char*) start;
+  while (curr < (char*) end) {
+    t |= *(curr++);
+  }
+  return t == 0;  
+}
+
 int buffer_is_zero(void *vbuf, size_t size) {
 
   char *buf = (char *)vbuf;
@@ -23,12 +32,16 @@ int buffer_is_zero(void *vbuf, size_t size) {
 
   char* current_byte = buf;
   unsigned char t = 0;
+  if(size < eight_word_length){
+    return bitwise_check(buf, buf + size);
+  }
+  
   while (!is_aligned(current_byte, 16)) {
     t |= *(current_byte++);
   }
-  if (t != 0) {
+  if (t != 0)
     return 0;
-  }
+  
   size_t offset = current_byte - buf;
   size_t last_chunk_pos = size - (size - offset) % eight_word_length;
 
@@ -52,13 +65,7 @@ int buffer_is_zero(void *vbuf, size_t size) {
   }
 
   // process remaining bytes
-  current_byte = buf + last_chunk_pos;
-  const char *end = buf + size;
-  while (current_byte < end) {
-    t |= *(current_byte++);
-  }
-
-  return t == 0;
+  return bitwise_check(buf + last_chunk_pos, buf + size);
 }
 
 int buffer_is_zero_fast(void *vbuf, size_t size) {
