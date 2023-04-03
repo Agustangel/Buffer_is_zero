@@ -4,66 +4,101 @@
 	.globl	buffer_is_zero
 	.type	buffer_is_zero, @function
 buffer_is_zero:
-.LFB5320:
+.LFB5321:
 	.cfi_startproc
 	endbr64
+	movq	%rdi, %rax
+	andl	$15, %eax
+	je	.L9
+	movq	%rdi, %rax
 	xorl	%edx, %edx
-	pxor	%xmm2, %xmm2
-	jmp	.L2
 	.p2align 4,,10
 	.p2align 3
-.L4:
-	movdqa	-64(%rdi,%rdx), %xmm0
-	movdqa	-32(%rdi,%rdx), %xmm1
-	por	-48(%rdi,%rdx), %xmm0
-	por	-16(%rdi,%rdx), %xmm1
+.L3:
+	addq	$1, %rax
+	orb	-1(%rax), %dl
+	testb	$15, %al
+	jne	.L3
+	xorl	%r8d, %r8d
+	testb	%dl, %dl
+	jne	.L1
+	subq	%rdi, %rax
+	movq	%rsi, %r8
+	subq	%rax, %r8
+	leaq	64(%rax), %rdx
+.L2:
+	cmpq	%rdx, %rsi
+	jb	.L5
+	movl	$64, %ecx
+	addq	%rdi, %rax
+	pxor	%xmm2, %xmm2
+	subq	%rdi, %rcx
+	jmp	.L6
+	.p2align 4,,10
+	.p2align 3
+.L17:
+	addq	$64, %rax
+	leaq	(%rcx,%rax), %rdx
+	cmpq	%rdx, %rsi
+	jb	.L5
+.L6:
+	movdqa	32(%rax), %xmm0
+	movdqa	(%rax), %xmm1
+	por	48(%rax), %xmm0
+	por	16(%rax), %xmm1
 	por	%xmm1, %xmm0
 	pcmpeqb	%xmm2, %xmm0
-	pmovmskb	%xmm0, %eax
-	cmpl	$65535, %eax
-	jne	.L7
-.L2:
-	addq	$64, %rdx
-	cmpq	%rsi, %rdx
-	jbe	.L4
+	pmovmskb	%xmm0, %edx
+	cmpl	$65535, %edx
+	je	.L17
+	xorl	%r8d, %r8d
+.L1:
+	movl	%r8d, %eax
+	ret
+	.p2align 4,,10
+	.p2align 3
+.L5:
+	andl	$63, %r8d
 	movq	%rsi, %rax
-	andq	$-64, %rax
+	subq	%r8, %rax
 	addq	%rdi, %rax
 	addq	%rsi, %rdi
 	cmpq	%rdi, %rax
-	jnb	.L8
+	jnb	.L12
 	xorl	%edx, %edx
 	.p2align 4,,10
 	.p2align 3
-.L6:
+.L8:
 	addq	$1, %rax
 	orb	-1(%rax), %dl
 	cmpq	%rax, %rdi
-	jne	.L6
-	xorl	%eax, %eax
+	jne	.L8
+	xorl	%r8d, %r8d
 	testb	%dl, %dl
-	sete	%al
+	sete	%r8b
+	movl	%r8d, %eax
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L7:
-	xorl	%eax, %eax
-	ret
-.L8:
-	movl	$1, %eax
-	ret
+.L9:
+	movq	%rsi, %r8
+	movl	$64, %edx
+	jmp	.L2
+.L12:
+	movl	$1, %r8d
+	jmp	.L1
 	.cfi_endproc
-.LFE5320:
+.LFE5321:
 	.size	buffer_is_zero, .-buffer_is_zero
 	.p2align 4
 	.globl	buffer_is_zero_fast
 	.type	buffer_is_zero_fast, @function
 buffer_is_zero_fast:
-.LFB5321:
+.LFB5322:
 	.cfi_startproc
 	endbr64
 	cmpq	$15, %rsi
-	jbe	.L12
+	jbe	.L19
 	pushq	%rbp
 	.cfi_def_cfa_offset 16
 	.cfi_offset 6, -16
@@ -76,19 +111,19 @@ buffer_is_zero_fast:
 	subq	$8, %rsp
 	.cfi_def_cfa_offset 32
 	cmpq	%rbx, %rbp
-	ja	.L15
-	jmp	.L13
+	ja	.L22
+	jmp	.L20
 	.p2align 4,,10
 	.p2align 3
-.L24:
+.L31:
 	addq	$16, %rbx
 	cmpq	%rbx, %rbp
-	jbe	.L13
-.L15:
+	jbe	.L20
+.L22:
 	movq	%rbx, %rdi
 	call	nonzero_chunk@PLT
 	testq	%rax, %rax
-	je	.L24
+	je	.L31
 	addq	$8, %rsp
 	.cfi_remember_state
 	.cfi_def_cfa_offset 24
@@ -100,7 +135,7 @@ buffer_is_zero_fast:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L13:
+.L20:
 	.cfi_restore_state
 	movq	%rbp, %rdi
 	call	nonzero_chunk@PLT
@@ -116,24 +151,24 @@ buffer_is_zero_fast:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L12:
+.L19:
 	.cfi_restore 3
 	.cfi_restore 6
 	addq	%rdi, %rsi
 	xorl	%eax, %eax
 	.p2align 4,,10
 	.p2align 3
-.L16:
+.L23:
 	addq	$1, %rdi
 	orb	-1(%rdi), %al
 	cmpq	%rdi, %rsi
-	ja	.L16
+	ja	.L23
 	testb	%al, %al
 	sete	%al
 	movzbl	%al, %eax
 	ret
 	.cfi_endproc
-.LFE5321:
+.LFE5322:
 	.size	buffer_is_zero_fast, .-buffer_is_zero_fast
 	.ident	"GCC: (Ubuntu 9.4.0-1ubuntu1~20.04.1) 9.4.0"
 	.section	.note.GNU-stack,"",@progbits

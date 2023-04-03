@@ -8,24 +8,39 @@
 #include <immintrin.h>
 #include <xmmintrin.h>
 
+
+typedef uint64_t v2du __attribute__ ((vector_size (16), aligned(16)));
+
+static inline int is_aligned(const void* ptr, unsigned alignment) {
+  return (uintptr_t) ptr % alignment == 0;
+}
+
 int buffer_is_zero(void *vbuf, size_t size) {
 
   char *buf = (char *)vbuf;
   uint64_t word_length = 8;
   uint64_t eight_word_length = 8 * word_length;
-  size_t last_chunk_pos = size - size % eight_word_length;
 
-  typedef uint64_t v2du __attribute__ ((vector_size (16), aligned(16)));
+  char* current_byte = buf;
+  unsigned char t = 0;
+  while (!is_aligned(current_byte, 16)) {
+    t |= *(current_byte++);
+  }
+  if (t != 0) {
+    return 0;
+  }
+  size_t offset = current_byte - buf;
+  size_t last_chunk_pos = size - (size - offset) % eight_word_length;
 
   v2du zero_vec = {0};
   v2du chunk_1 = {0};
   v2du chunk_2 = {0};
 
-  v2du *start = (v2du *)buf;
-  for (unsigned long idx = 0; idx + eight_word_length <= size;
+  v2du *start = (v2du *)(current_byte);
+  for (size_t idx = 0; idx + offset + eight_word_length <= size;
        idx += eight_word_length) {
     
-    start = (v2du *)(buf + idx);  
+    start = (v2du *)(buf + offset + idx);  
 
     chunk_1 = *(start) | *(start + 1);
     chunk_2 = *(start + 2) | *(start + 3);;
@@ -37,9 +52,8 @@ int buffer_is_zero(void *vbuf, size_t size) {
   }
 
   // process remaining bytes
-  const char *current_byte = buf + last_chunk_pos;
+  current_byte = buf + last_chunk_pos;
   const char *end = buf + size;
-  unsigned char t = 0;
   while (current_byte < end) {
     t |= *(current_byte++);
   }
